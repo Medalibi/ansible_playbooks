@@ -1,0 +1,28 @@
+---
+- name: Install and enable filebeat on Linux machines 
+  hosts: triv_serv
+#TR1 TR2 local triv_serv
+  gather_facts: no
+  tasks:
+   - name: Add in the Elasticsearch rep
+     apt_repository:
+       repo: deb https://artifacts.elastic.co/packages/6.x/apt stable main
+       state: present
+
+   - name: Add the Elasticsearch repo key 
+     apt_key:
+       url: https://artifacts.elastic.co/GPG-KEY-elasticsearch
+       state: present
+
+   - name: Install filebeat
+     apt: pkg=filebeat state=installed update_cache=true
+
+   - name: Copy filebeat configuration file
+     copy: 
+       src: /media/penelopeprime/Scripts/filebeat.yml
+       dest: /etc/filebeat/filebeat.yml
+   - name: Start and enable the filebeat service
+     service:
+       name: filebeat
+       state: started
+       enabled: yes

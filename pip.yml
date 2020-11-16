@@ -1,0 +1,37 @@
+- name: Python Pip on use (install, update, remove)
+  hosts: TR1
+## TR1 TR2
+  become: yes
+  become_method: sudo
+  gather_facts: no
+  tasks:
+
+   - name: Install Python pip
+     apt: pkg=python-pip state=installed update_cache=true
+
+   - name: Install Python libraries using pip
+     pip:
+       name: matplotlib
+#       version: 1.7.0
+
+#   - name: Install Python libraries using pip
+#     pip:
+#       name: requests
+
+#   - apt:
+#      name: python-pip
+#      update_cache: yes
+
+#   - raw: pip install --upgrade pip
+
+#   - shell: pip3 install -U python-igraph 
+#   - shell: pip install -U html5lib 
+#   - shell: pip3 install -U html5lib
+#   - shell: pip install -U bs4 
+#   - shell: pip3 install -U bs4
+
+#   - shell: apt install -y python3-dev libmysqlclient-dev python3-mysql.connector python3-mysqldb  
+
+#   - shell: pip3 install -U pygraphviz pymysql bioservices fisher fabric
+
+#   - shell: cd /usr/local/pypath/; python3 setup.py sdist

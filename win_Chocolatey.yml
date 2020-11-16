@@ -1,0 +1,48 @@
+---
+- name: Update Windows softwares using Chocolatey
+  hosts: ManagementWinServ
+#ThinClientTR1 ThinClientTR2 
+  gather_facts: no
+  tasks:
+    - name: Install Chocolatey
+      win_chocolatey:
+        name: '{{ item }}'
+        state: latest
+      with_items:
+        - chocolatey
+        - chocolatey-core.extension
+        - powershell
+      ignore_errors: yes
+
+    - name: Install and update OS Plugins and Tools
+      win_chocolatey:
+        name: '{{ item }}'
+        state: latest
+      async: 60
+      with_items:
+        - curl
+        - openssh
+        - wget
+        - atom
+        - putty
+      ignore_errors: yes
+
+    - name: Install and update NotePad++
+      win_chocolatey:
+        name: notepadplusplus.install
+        state: latest
+
+    - name: Create a Desktop Icon for NotePad++
+      win_copy: src=/media/penelopeprime/Archive/Notepad++.lnk dest=C:\Users\Public\Desktop\Notepad++.lnk
+
+    - name: Install and update archiver
+      win_chocolatey:
+        name: 7zip.install
+        state: latest
+
+    - name: Install VMware Tools
+      win_chocolatey:
+        name: vmware-tools
+#        state: latest
+        version: '10.1.5.5055683'
+      ignore_errors: yes

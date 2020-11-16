@@ -1,0 +1,21 @@
+/install_viewagent.sh -r yes -A yes -b broker7test.courses.ebi.ac.uk -d courses.ebi.ac.uk -u linuxviewadmin -p fridge
+
+./install_viewagent.sh -r yes -A yes -n $(hostname -s) -b broker7test.courses.ebi.ac.uk -d courses.ebi.ac.uk -u linuxviewadmin -p fridge
+
+./install_viewagent.sh -r yes -A yes -n $(hostname -s) -b 10.7.243.87 -d courses.ebi.ac.uk -u linuxviewadmin -p fridge
+
+
+./install_viewagent.sh -r yes -U yes -A yes -n $(hostname -s) -b broker7test.courses.ebi.ac.uk -d courses.ebi.ac.uk -u linuxviewadmin -p fridge
+
+
+
+auto ens160
+iface ens160 inet static
+	address 10.7.243.110
+	netmask 255.255.255.0
+	gateway 10.7.243.1
+	network 10.7.243.0
+	broadcast 10.7.243.255
+
+	dns-search	courses.ebi.ac.uk
+	dns-nameservers	10.7.243.10 10.7.243.11

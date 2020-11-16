@@ -1,0 +1,39 @@
+---
+- name: Disater solution for Nvidia sharing 
+  hosts: MetabolVM-13 MetabolVM-14 MetabolVM-15 MetabolVM-16 MetabolVM-17 MetabolVM-18 MetabolVM-19 MetabolVM-20 MetabolVM-21 MetabolVM-22 MetabolVM-23 MetabolVM-24 MetabolVM-25 MetabolVM-26 MetabolVM-27 MetabolVM-28 MetabolVM-29 MetabolVM-30 MetabolVM-31
+  become: yes
+  become_method: sudo
+  gather_facts: no
+  tasks:
+   - name: Update the software cache
+     apt: update_cache=yes
+
+   - name: make sure aptitude is installed
+     apt: pkg=aptitude state=present
+
+   - name: Remove Nvidia driver Package
+     apt: pkg=nvidia-340 state=absent
+
+   - name: Remove Nvidia settings Package
+     apt: pkg=nvidia-settings state=absent 
+
+   - name: Remove useless packages from the cache
+     apt:
+       autoclean: yes
+
+   - name: Remove dependencies that are no longer required
+     apt:
+       autoremove: yes
+
+  handlers:
+   - name: reboot
+     command: shutdown -r 1 "Ansible reboot triggred after update"
+     async: 0
+     poll: 0
+     ignore_errors: true
+
+
+#    - shell: nvidia-smi -q -g 0 -d UTILIZATION | sed -n '14,19p' 
+#      register: ps
+
+#    - debug: var=ps.stdout_lines

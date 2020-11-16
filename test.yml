@@ -1,0 +1,91 @@
+---
+#- name: test raw module
+#  hosts: windows 
+# tasks:
+#    - name: run ipconfig
+#      raw: whoami
+#      register: ipconfig
+#    - debug: var=ipconfig
+
+- name: Testing things for the sake of it
+  hosts: CancerGen2VM-11
+  become: true
+  tasks:
+    - name: Create Desktop truster desktop file
+      file:
+        path: /home/training/.config/autostart/desktop-truster.desktop
+        state: touch
+        owner: training
+        group: training
+        mode: '0777'
+
+    - name: Create Desktop truster Bash script file
+      file:
+        path: /home/training/.config/autostart/desktop-truster.sh
+        state: touch
+        owner: training
+        group: training
+        mode: '0777'
+
+    - name: Fill-in Desktop truster desktop file
+      blockinfile:
+        path: /home/training/.config/autostart/desktop-truster.desktop
+        block: |
+          [Desktop Entry]
+          Type=Application
+          Comment=Autostarter to trust all desktop files
+          Terminal=false
+          Name=Desktop Truster
+          Exec=/home/training/.config/autostart/desktop-truster.sh
+
+    - name: Fill-in Desktop truster Bash script file
+      blockinfile:
+        path: /home/training/.config/autostart/desktop-truster.sh
+        block: |
+          #!/bin/bash
+          # Wait for nautilus-desktop
+          while ! pgrep -f 'nautilus-desktop' > /dev/null; do
+            sleep 1
+          done
+          # enable user home default desktop icons
+          gsettings get org.gnome.desktop.lockdown disable-lock-screen
+          gsettings set org.gnome.desktop.lockdown disable-lock-screen true
+          gsettings get org.gnome.desktop.screensaver lock-enabled
+          gsettings set org.gnome.desktop.screensaver lock-enabled false
+          gsettings set org.gnome.nautilus.desktop home-icon-visible  true
+          gsettings set org.gnome.nautilus.desktop volumes-visible true
+          gsettings set org.gnome.nautilus.desktop trash-icon-visible true
+          # Trust all desktop files
+          for i in /home/training/Desktop/*.desktop; do
+            [ -f "${i}" ] || break
+            gio set "${i}" "metadata::trusted" yes
+            # gio set "${i}" "metadata::trusted" true (ubuntu 19.04 onward)
+          done
+          # Restart nautilus, so that the changes take effect (otherwise we would have to press F5)
+          killall nautilus-desktop && nautilus-desktop &
+          # Remove X from this script, so that it won't be executed next time
+          chmod -x ${0}
+
+
+#    - name: Allow setup user to su to the user training without password
+#      blockinfile:
+#        path: /etc/pam.d/su
+#        insertafter: '^# auth       sufficient pam_wheel.so trust'
+#        block: | 
+#          auth  [success=ignore default=1] pam_succeed_if.so user = training
+#          auth  sufficient                 pam_succeed_if.so use_uid user = setup 
+#          auth  sufficient                 pam_succeed_if.so use_uid user ingroup setup
+#      become: true
+
+#    - name: Set tools newly created Desktop icons permissions
+#      shell: sudo -H -u training for i in /home/training/Desktop/*.desktop; do    gio set "$i" "metadata::trusted" yes ;done
+#      become_user: training
+      ignore_errors: yes
+
+#    - win_shell: sc query wuauserv
+#      args:
+#        executable: cmd
+#      register: stat
+
+#    - debug: var=stat
+

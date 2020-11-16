@@ -1,0 +1,54 @@
+---
+- name: Install Horizon ViewAgent into the Linux VM
+  hosts: containtest
+## TR1 TR2 ExternalTR
+  gather_facts: no
+  tasks:
+   - name: Configure local DNS to point to the NFS file server
+     lineinfile : path=/etc/hosts line='10.7.245.5   penelopeprime.courses.ebi.ac.uk   penelopeprime'
+
+   - name: Remove old fileserver DNs configuration
+     lineinfile : path=/etc/hosts regexp='^10.7.243.68'  line=' '
+
+   - name: Unmount old NFS fileserver
+     shell: umount /media/penelopeprime
+
+   - name: Make sure that the NFS configuration is well set
+     lineinfile : path=/etc/fstab line='penelopeprime.courses.ebi.ac.uk:/media/shared/Course_Materials /media/penelopeprime nfs4 defaults 0 0'
+
+   - name: Make sure the NFS folder is there
+     file: path=/media/penelopeprime state=directory mode=0777
+
+   - name: Mount the NFS fileserver
+     shell: mount -a 
+
+   - name: Unarchive the Horizon ViewAgent Tarball
+     unarchive:
+       src: "/media/penelopeprime/.Admin/VMware-horizonagent-linux-x86_64-7.4.0-7380911.tar.gz"
+       dest: /home/setup/
+       remote_src: True  
+       owner: setup
+       mode: 0777
+
+   - name: Install and register the Horizon ViewAgent with the Connection server
+     shell: cd /home/setup/VMware-*-linux* && ./install_viewagent.sh -r no -A yes -n $(hostname -s) -b broker1.courses.ebi.ac.uk -d courses.ebi.ac.uk -u linuxviewadmin -p fridge 
+     register: HorizonInstallLog
+
+   - name: Collecting installation logs
+     debug: var=HorizonInstallLog.stdout_lines
+
+   - name: Changing the default network in the Viewagenet configuration file
+     lineinfile : dest=/etc/vmware/viewagent-custom.conf regexp='^#Subnet=192.168.1.0/24' line='Subnet=10.7.245.0/24'
+
+   - name: Disabling Keyboard Layout Syncronisation
+     lineinfile : dest=/etc/vmware/viewagent-custom.conf regexp='^#KeyboardLayoutSync=FALSE' line='KeyboardLayoutSync=FALSE'
+
+   - name: Enable bi-directional Clipboard option between client and agent
+     lineinfile : dest=/etc/vmware/config regexp='^#Clipboard.Direction=1' line='Clipboard.Direction=1'
+
+   - name: Restart machines to apply the change
+     command: /sbin/shutdown -r +1 "Reboot triggered by Ansible (Horizon Agent installation)."
+     async: 0
+     poll: 0
+     ignore_errors: true
+     

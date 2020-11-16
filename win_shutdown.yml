@@ -1,0 +1,9 @@
+---
+- name: Windows Power control
+  hosts: r2u30
+#ThinClientTR1 ThinClientTR2
+  tasks:
+    - name: Shutdown remote Windows hosts  
+      raw: shutdown -s -t 15
+
+

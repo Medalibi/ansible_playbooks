@@ -1,0 +1,46 @@
+---
+- name: Copy files/folder to remote machines
+  hosts: TR1
+  become: yes
+  become_method: sudo
+  gather_facts: no
+  tasks:
+   - copy: 
+       src: /home/alibi/jre1.8.0_221
+       dest: /home/training/
+#       remote_src: True 
+       owner: training 
+       mode: 0777
+
+   - shell: ln -s /home/training/jre1.8.0_221/bin/java /usr/local/bin/
+ 
+#   - name: Copy files using rsync
+#     shell: rsync -u /media/penelopeprime/Metagenomics_Bioinformatics_Jun19/Day_2/3_Alex_Mitchell/* /home/training/data/mgnify/
+#     shell: cp /media/penelopeprime/Metagenomics_Bioinformatics_Jun19/fix_graphlan.sh /home/training/data/
+
+#   - copy:
+#       src: /media/penelopeprime/.Admin/viewagent-custom.conf
+#       dest: /etc/vmware/viewagent-custom.conf
+#       remote_src: True
+#       owner: root
+#       mode: 0644
+
+
+#   - copy:
+#       src: /media/penelopeprime/Course_Materials/Metagenomics_Bioinformatics_Jun19/Day_2/3_Alex_Mit
+#       dest: /home/training/ENA
+#       remote_src: True
+#       owner: training
+#       mode: 0777
+
+
+#   - copy: 
+#       src: "/media/penelopeprime/MST_Module5_Jan18/Module_*" 
+#       dest: /home/training/Desktop/
+#       remote_src: True
+#       owner: training
+#       mode: 0777
+
+#   - shell: chmod 777 -R /home/training/data/fix_graphlan.sh
+#   - shell: chmod 777 -R /home/training/Desktop/Module_*
+#   - shell: chown training -R /home/training/Desktop/Module_*

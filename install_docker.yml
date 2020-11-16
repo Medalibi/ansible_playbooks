@@ -1,0 +1,64 @@
+---
+- name: Install packages Docker CE on the host
+  gather_facts: no
+  hosts: TR2
+# TR1 TR2
+  become: yes
+  become_method: sudo
+  tasks:
+#   - name: Update the software cache
+#     apt: update_cache=yes
+
+#   - name: Upgrade all software
+#     apt: upgrade=dist
+
+   - name: Install Pip
+     apt: pkg=python-pip state=installed update_cache=false
+
+   - name: Install cwltools
+     shell: pip install cwltool
+
+#   - name: Add Docker’s official GPG key
+#     shell: apt install linux-image-extra-$(uname -r)
+
+   - name: Install Docker pre requ
+     apt:
+       name: "{{ packages }}"
+       update_cache: yes
+     vars:
+       packages:
+       - linux-image-extra-virtual
+       - apt-transport-https
+       - ca-certificates
+       - curl
+       - software-properties-common
+
+   - name: Add Docker GPG key
+     apt_key: url=https://download.docker.com/linux/ubuntu/gpg
+
+   - name: Add Docker APT repository
+     apt_repository:
+      repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic stable
+
+   - name: Install Docker CE
+     apt:
+       name: "{{ packages }}"
+       update_cache: yes
+     vars:
+       packages:
+       - docker-ce
+       - docker-ce-cli
+       - containerd.io
+
+#   - name: Add the repo to the source.list
+#     shell: add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+
+#   - name: Install Docker CE
+#     apt: pkg=docker-ce state=installed update_cache=true
+
+   - name: Add training to the Docker group
+     shell: usermod -aG docker training
+
+   - name: Add setup to the Docker group
+     shell: usermod -aG docker setup
+

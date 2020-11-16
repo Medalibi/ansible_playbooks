@@ -1,0 +1,65 @@
+---
+- name: Run shell commands as they are
+  gather_facts: no
+  hosts: TR1
+#TR1 TR2
+  tasks:
+#   - name: Run a Shell command
+#     shell: 
+#     become: true
+#     become_user: training
+#     register: out
+
+#   - debug: var=out.stdout
+
+
+#   - name: Run a Shel command
+#     shell: /usr/local/MATLAB/R2017b/bin/activate_matlab.sh
+#     become: true
+#     become_user: training
+
+   - unarchive:
+       src: /media/penelopeprime/.Admin/ParaView-5.5.0-Qt5-MPI-Linux-64bit.tar.gz
+       dest: /usr/local/
+       remote_src: True
+       owner: setup
+       mode: 0777
+
+   - name: mkdir paraview
+     shell: mkdir /usr/local/ParaView-v5.5.0
+
+   - name: Rename to keep it right
+     shell: mv /usr/local/ParaView-5.5.0-Qt5-MPI-Linux-64bit/* /usr/local/ParaView-v5.5.0/
+     ignore_errors: yes
+
+   - unarchive:
+       src: /media/penelopeprime/.Admin/ParaViewData-v5.5.0.tar.gz
+       dest: /usr/local/
+       remote_src: True
+       owner: setup
+       mode: 0777
+
+   - name: symlink
+     shell: ln -s /usr/local/ParaView-v5.5.0/bin/* /usr/local/bin/
+     ignore_errors: yes
+
+   - copy:
+       src: /media/penelopeprime/.Admin/ParaView.desktop
+       dest: /home/training/Desktop/ParaView.desktop
+       remote_src: True 
+       owner: training
+       mode: 0777 
+
+
+#   - copy:
+#       src: /media/penelopeprime/.Admin/ParaView-5.5.0-Qt5-MPI-Linux-64bit.tar.gz
+#       dest: /usr/local/
+#       remote_src: True
+
+#   - copy:
+#       src: /media/penelopeprime/.Admin/ParaViewData-v5.5.0.tar.gz
+#       dest: /usr/local/
+#       remote_src: True
+
+#   - name: unrachive
+#     shell: 

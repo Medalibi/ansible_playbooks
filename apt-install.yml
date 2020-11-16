@@ -1,0 +1,74 @@
+---
+- name: Apt-get install a software or a list of software
+  hosts: TR2
+  become: yes
+  become_method: sudo
+  gather_facts: no
+  tasks:
+#   - shell: dpkg --configure -a
+
+#   - name: Install a list of packages
+#     apt: pkg={{item}} state=installed
+#     with_items:
+#       - build-essential
+#       - freeglut3
+#       - freeglut3-dev
+#       - python3-numpy
+#       - python3-dev
+#       - python-dev
+#       - libglew-dev
+#       - libfreetype6-dev
+#       - libmsgpack-dev
+#       - python-pmw 
+#       - zlib1g-dev
+#       - zlibc
+#       - bzip2
+#       - libncurses5
+#       - libncurses5-dev
+
+#   - name: Install a Package
+#     apt: pkg=nvidia-340 state=installed update_cache=true
+
+#   - name: Install a Package
+#     apt: pkg=openjdk-8-jre-headless state=installed update_cache=true
+
+#   - name: Install a Package
+#     apt: pkg=openjdk-11-jre-headless state=installed
+
+#   - name: Install a Package
+#     apt: pkg=default-jre state=installed 
+
+#   - name: update package config
+#     shell: echo 2 | sudo update-alternatives --config java
+
+#   - name: Fix package config
+#     shell: sed -i 's/$(dirname "$0")/\/usr\/local\/rapidminer-studio\//g' /usr/local/rapidminer-studio/RapidMiner-Studio.sh
+
+   - name: Fix package config
+     shell: apt-get purge -y teamviewer --autoremove  
+
+#     register: output	
+
+#   - name: Install openssh server
+#     apt: pkg=openssh-server state=installed update_cache=true
+
+#  roles: apt-install
+#  - apt_install__base_packages= aptitude
+
+#   - name: check if a reboot is required
+#     shell: "[ -f /var/run/reboot-required ]"
+#     failed_when: False
+#     register: reboot_required
+#     changed_when: reboot_required.rc == 0
+#     notify: reboot
+
+#  handlers:
+#   - name: reboot
+#     command: shutdown -r now "Ansible reboot triggred after update"
+#     async: 0
+#     poll: 0
+#     ignore_errors: true
+    
+
+#   - debug: var=output.stdout
+

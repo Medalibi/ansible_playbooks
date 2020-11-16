@@ -1,0 +1,51 @@
+---
+- name: Fix pip3 issues
+  gather_facts: no
+  hosts: TR1
+#TR1 TR2
+  tasks:
+#   - name: Run a Shell command
+#     shell: pip uninstall pypath -y
+#     become: true
+#     become_user: training
+#     register: out
+
+#   - debug: var=out.stdout
+
+   - copy:
+       src: /media/penelopeprime/Course_Materials/.Admin/Wallpapers/__init__.py
+       dest: /usr/local/lib/python3.6/dist-packages/pip/_vendor/pkg_resources/__init__.py
+
+#   - copy:
+#       src: /media/penelopeprime/Course_Materials/.Admin/__init__.py
+#       dest: /usr/local/lib/python3.5/dist-packages/pip/_vendor/pkg_resources/__init__.py 
+#   - copy:
+#       src: /media/penelopeprime/Course_Materials/.Admin/Docker/__init__.py
+#       dest: /usr/lib/python3/dist-packages/pkg_resources/__init__.py 
+#   - copy:
+#       src: /media/penelopeprime/Course_Materials/.Admin/pypath-0.7.73.tar.gz
+#       dest: /home/training/pypath-0.7.73.tar.gz
+
+#   - name: Run a Shell command
+#     shell: pip -y install /home/training/pypath-0.7.73.tar.gz
+#     become: true
+#     become_user: training
+
+   - name: Run a Shell command
+     shell: pip uninstall pypath -y
+     ignore_errors: yes
+
+#   - name: Run a Shell command
+#     shell: pip3 uninstall pypath -y
+
+   - name: Run a Shell command
+     script: /home/alibi/fixes.sh 
+#     register: out
+
+#   - debug: var=out.stdout_lines
+
+#   - name: Run a Shell command
+#     shell: pip3 -y install /home/training/pypath-0.7.73.tar.gz
+
+#   - name: Run a Shell command
+#     shell: rm /home/training/pypath-0.7.73.tar.gz

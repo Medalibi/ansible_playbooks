@@ -1,0 +1,63 @@
+---
+- name: Building a course image testing playbook
+  hosts: TR2
+# coursevm CourseVM1
+  gather_facts: no
+  become: yes
+  become_method: sudo
+  tasks:  
+
+# ###################################
+
+  - name: Create Desktop file 1
+    file:
+      path: /home/training/Desktop/act.desktop
+      state: touch
+      owner: training
+      group: training
+      mode: '0777'
+
+  - name: Fill in Desktop file 1
+    blockinfile:
+      path: /home/training/Desktop/act.desktop
+      block: |
+        [Desktop Entry]
+        Type=Application
+        Terminal=false
+        Name=Act 18.0.3
+        Icon=/usr/local/artemis/dist/act.jar
+        Exec=/usr/local/artemis/act
+
+  - name: Create Desktop file 2
+    file:
+      path: /home/training/Desktop/art.desktop
+      state: touch
+      owner: training
+      group: training
+      mode: '0777'
+
+  - name: Fill in Desktop file 2
+    blockinfile:
+      path: /home/training/Desktop/art.desktop
+      block: |
+        [Desktop Entry]
+        Type=Application
+        Terminal=false
+        Name=Artemis 18.0.3
+        Icon=/usr/local/artemis/dist/art.jar
+        Exec=/usr/local/artemis/art
+
+
+
+
+
+  - name: Fill in FastQC Desktop file
+    blockinfile:
+      path: /home/training/Desktop/fastqc.desktop
+      block: |
+        [Desktop Entry]
+        Type=Application
+        Terminal=false
+        Name=FastQC 0.11.8
+        Icon=/usr/local/FastQC/fastqc_icon.ico
+        Exec=/usr/local/FastQC/fastqc

@@ -1,0 +1,15 @@
+---
+- name: Restart hosts
+  gather_facts: no
+  become: yes
+  become_method: sudo
+  hosts: TR2
+  tasks:
+#   - apt: pkg=nvidia-375 state=absent
+#   - apt: pkg=nvidia-340 state=installed update_cache=true
+
+   - name: restart machine
+     command: shutdown -r 1 "Ansible reboot triggred"
+     async: 0
+     poll: 0
+     ignore_errors: true

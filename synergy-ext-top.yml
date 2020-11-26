@@ -11,9 +11,9 @@
     # "HL Training Internal" "HL Training External"
 
 ##########################################################################
-    coursevm: MetaGenVM
+    coursevm: bioexclwintopvm
     vmsnapshot: Post_Nvidia
-    sourcevm: MetagenTopNov20
+    sourcevm: BioExWntShlTPDec20
 ##########################################################################
 
   tasks:
@@ -93,28 +93,28 @@
 
     - name: Remove old VMs pool file from inventory
       file:
-        path: "/Users/alibi/ansible_playbooks/hosts.d/TopCluster"
+        path: "/Users/alibi/ansible_playbooks/hosts.d/{{ sourcevm }}"
         state: absent
       ignore_errors: yes
 
     - name: Fill in VMs pool inventory file
       blockinfile:
-        path: "/Users/alibi/ansible_playbooks/hosts.d/TopCluster"
+        path: "/Users/alibi/ansible_playbooks/hosts.d/{{ sourcevm }}"
         create: yes
         block: |
-          [TopCluster:vars]
+          [{{ sourcevm }}:vars]
           remote_user=setup
           brokerip="{{ brokerip }}"
           vmdomain="{{ vmdomain }}"
           brokeruser="{{ brokeruser }}"
           brokerpass="{{ brokerpass }}"
 
-          [TopCluster]
+          [{{ sourcevm }}]
 
     - name: Fill in backup hosts file
       lineinfile:
         line: "{{ item.0 }}        ansible_host={{ item.1 }}"
-        path: "/Users/alibi/ansible_playbooks/hosts.d/TopCluster"
+        path: "/Users/alibi/ansible_playbooks/hosts.d/{{ sourcevm }}"
         insertafter: EOF
       with_together:
         - "{{ clonedvm | json_query('results[*].instance.hw_name') }}"

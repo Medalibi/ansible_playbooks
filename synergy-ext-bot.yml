@@ -11,9 +11,9 @@
     # "HL Training Internal" "HL Training External"
 
 ##########################################################################
-    coursevm: StructBioVM
+    coursevm: bioexclwinvm
     vmsnapshot: Post_Nvidia
-    sourcevm: StructBioDec20
+    sourcevm: BioExWntShlDec20
 ##########################################################################
 
   tasks:
@@ -46,7 +46,7 @@
           hostname: "{{ coursevm }}-{{ item }}"
           timezone: "Europe/London"
           dns_servers: "{{ vmdnsserver }}"
-      with_sequence: start=1 end=40 format=%02d
+      with_sequence: start=1 end=8 format=%02d
       #stride=2
       delegate_to: localhost
       async: 120
@@ -70,7 +70,7 @@
 
         name: "{{ coursevm }}-{{ item }}"
         state: poweredon
-      with_sequence: start=1 end=40 format=%02d
+      with_sequence: start=1 end=8 format=%02d
       delegate_to: localhost
       register: clonedvm
 
@@ -93,28 +93,28 @@
 
     - name: Remove old VMs pool file from inventory
       file:
-        path: "/Users/alibi/ansible_playbooks/hosts.d/BottomCluster"
+        path: "/Users/alibi/ansible_playbooks/hosts.d/{{ sourcevm }}"
         state: absent
       ignore_errors: yes
 
     - name: Fill in VMs pool inventory file
       blockinfile:
-        path: "/Users/alibi/ansible_playbooks/hosts.d/BottomCluster"
+        path: "/Users/alibi/ansible_playbooks/hosts.d/{{ sourcevm }}"
         create: yes
         block: |
-          [BottomCluster:vars]
+          [{{ sourcevm }}:vars]
           remote_user=setup
           brokerip="{{ brokerip }}"
           vmdomain="{{ vmdomain }}"
           brokeruser="{{ brokeruser }}"
           brokerpass="{{ brokerpass }}"
 
-          [BottomCluster]
+          [{{ sourcevm }}]
 
     - name: Fill in backup hosts file
       lineinfile:
         line: "{{ item.0 }}        ansible_host={{ item.1 }}"
-        path: "/Users/alibi/ansible_playbooks/hosts.d/BottomCluster"
+        path: "/Users/alibi/ansible_playbooks/hosts.d/{{ sourcevm }}"
         insertafter: EOF
       with_together:
         - "{{ clonedvm | json_query('results[*].instance.hw_name') }}"

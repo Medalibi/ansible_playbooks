@@ -8,14 +8,14 @@
 #TR1 TR2  TopCluster BottomCluster   coursevm
   tasks:
 
-#  - name: Download and extract Datasets
-#    unarchive:
-#      src: "https://ebitutorial.s3.climb.ac.uk/Data.tar.gz"
-#      dest: /home/training/
-#      remote_src: yes
-#      mode: '0777'
-#      owner: training
-#      group: training
+  - name: Download and extract Datasets
+    unarchive:
+      src: "/media/penelopeprime/BioExcel_winter_school/tutorial_files.tar.gz"
+      dest: /home/training/
+      remote_src: yes
+      mode: '0777'
+      owner: training
+      group: training
 
 #  - shell: |
 #      #CPATH=`which concoct_refine`
@@ -27,9 +27,9 @@
 #    become_user: training
 
 #  - file: path=/homes state=absent
-  - shell: mkdir /home/training/DB_folder/infantgut && mv /home/training/Data/sample* /home/training/DB_folder/infantgut/ 
-    become: yes
-    become_user: training
+#  - shell: mkdir /home/training/DB_folder/infantgut && mv /home/training/Data/sample* /home/training/DB_folder/infantgut/ 
+#    become: yes
+#    become_user: training
 
 #  - copy:
 #     src: /media/penelopeprime/Metagenomics_bioinformatics/Data/
@@ -39,7 +39,7 @@
 #     group: training
 #     mode: 0777  
 
-  - shell: chmod 777 -R /home/training/DB_folder
+  - shell: chmod 777 -R /home/training/tutorial_files
 
 #  - name: Download and extract Cytoscape tutorial document
 #    unarchive:

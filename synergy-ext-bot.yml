@@ -134,7 +134,7 @@
 
 ##########################################################################
 ##########################################################################
-- hosts: float-bot
+- hosts: BioExWntShlDec20
   # BottomCluster float-bot
   name: Configure VMs instances
   remote_user: setup
@@ -276,14 +276,14 @@
 
     - name: Unarchive the Horizon ViewAgent Tarball
       unarchive:
-        src: /media/penelopeprime/.Admin/Horizon-7.12/VMware-horizonagent-linux-x86_64-7.12.0-15765535.tar.gz
+        src: /media/penelopeprime/.Admin/Horizon-7.13/VMware-horizonagent-linux-x86_64-7.13.0-16944161.tar.gz
         dest: /home/setup/
         remote_src: True
         owner: setup
         mode: 0777
 
     - name: Install and register the Horizon ViewAgent with the Connection server
-      shell: cd /home/setup/VMware-*-linux* && ./install_viewagent.sh -r no -A yes -n "{{inventory_hostname}}" -b "{{ brokerip }}" -d "{{ vmdomain }}" -u "{{ brokeruser }}" -p "{{ brokerpass }}"
+      shell: cd /home/setup/VMware-*-linux* && ./install_viewagent.sh -r no -A yes -n "{{inventory_hostname}}" -b broker-test.training.ebi.ac.uk -d "{{ vmdomain }}" -u "{{ brokeruser }}" -p "{{ brokerpass }}"
       register: HorizonInstallLog
 
     - name: Collecting installation logs

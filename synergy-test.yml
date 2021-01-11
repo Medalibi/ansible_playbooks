@@ -1,21 +1,22 @@
 ---
-- name: Clone linked VMware VMs on External VLAN
+- name: Clone linked VMware VMs
   hosts: localhost
   gather_facts: yes
   vars:
     cluster: HL-VDI
-    # HL-VDI Top-Chassis Bottom-Chassis
+    # Top-Chassis Bottom-Chassis
     datastore: flash-ds1
     # slower-bigger flash-ds1
-    vlanname: "HL Training External"
+    vlanname: "HL Training Management"
     # "HL Training Internal" "HL Training External"
 
 ##########################################################################
-    coursevm: bioexcltestvm
+
+    coursevm: bioexclH81v2vm
     vmsnapshot: Post_Nvidia
     sourcevm: BioExWntShlDec20
-    nbr: 4    # Number of VMs to be deployed
-    strt: 1   # index of first VM
+    nbr: 4
+    strt: 1
 ##########################################################################
 
   tasks:
@@ -68,7 +69,6 @@
         validate_certs: no
         datacenter: "{{ datacenter }}"
         cluster: "{{ cluster }}"
-        folder: "{{ vmfolder }}"
 
         name: "{{ coursevm }}-{{ item }}"
         state: poweredon
@@ -136,8 +136,8 @@
 
 ##########################################################################
 ##########################################################################
-- hosts: float
-  # TopCluster  float
+- hosts: BioExWntShlDec20
+  # BottomChassis float
   name: Configure VMs instances
   remote_user: setup
   become: True
@@ -168,7 +168,7 @@
 
     - name: Configure local DNS to point to the NFS file server
       #lineinfile : path=/etc/hosts line='10.33.32.20   penelopeprime.training.ebi.ac.uk   penelopeprime'
-      lineinfile : path=/etc/hosts regexp='^10.33.32.20*' line='10.33.36.9   penelopeprime.training.ebi.ac.uk   penelopeprime'
+      lineinfile : path=/etc/hosts regexp='^10.33.32.20*' line='10.33.32.20   penelopeprime.training.ebi.ac.uk   penelopeprime'
 
  #   - name: Remove old fileserver DNs configuration
  #     lineinfile : path=/etc/hosts regexp='^10.7.243.68'  line=' '
@@ -182,7 +182,7 @@
 
     - name: Make sure that the NFS configuration is well set
       #lineinfile : path=/etc/fstab line='10.33.32.20:/media/shared/Course_Materials /media/penelopeprime    nfs4    defaults     0 0'
-      lineinfile : path=/etc/fstab regexp='^10.33.32.20:/media/shared/Course_Materials*' line='10.33.36.9:/media/shared/Course_Materials /media/penelopeprime    nfs4    defaults     0 0'
+      lineinfile : path=/etc/fstab regexp='^10.33.32.20:/media/shared/Course_Materials*' line='10.33.32.20:/media/shared/Course_Materials /media/penelopeprime    nfs4    defaults     0 0'
 
     - name: Make sure the NFS folder is there
       file: path=/media/penelopeprime state=directory mode=0777
@@ -278,21 +278,21 @@
 
     - name: Unarchive the Horizon ViewAgent Tarball
       unarchive:
-        src: /media/penelopeprime/.Admin/Horizon-7.13/VMware-horizonagent-linux-x86_64-7.13.0-16944161.tar.gz
+        src: /media/penelopeprime/.Admin/Horizon-8.1/VMware-horizonagent-linux-x86_64-2012-8.1.0-17336770.tar.gz
         dest: /home/setup/
         remote_src: True
         owner: setup
         mode: 0777
 
     - name: Install and register the Horizon ViewAgent with the Connection server
-      shell: cd /home/setup/VMware-*-linux* && ./install_viewagent.sh -r no -A yes -n "{{inventory_hostname}}" -b "{{ brokerip }}" -d "{{ vmdomain }}" -u "{{ brokeruser }}" -p "{{ brokerpass }}"
+      shell: cd /home/setup/VMware-*-linux* && ./install_viewagent.sh -r no -A yes -n "{{ inventory_hostname }}" -b broker8-1test.training.ebi.ac.uk -d "{{ vmdomain }}" -u "{{ brokeruser }}" -p "{{ brokerpass }}"
       register: HorizonInstallLog
 
     - name: Collecting installation logs
       debug: var=HorizonInstallLog.stdout_lines
 
     - name: Changing the default network in the Viewagenet configuration file
-      lineinfile: dest=/etc/vmware/viewagent-custom.conf regexp='^#Subnet=192.168.1.0/24' line='Subnet=10.33.36.0/22'
+      lineinfile: dest=/etc/vmware/viewagent-custom.conf regexp='^#Subnet=192.168.1.0/24' line='Subnet=10.33.32.0/24'
 
     - name: Disabling Keyboard Layout Syncronisation
       lineinfile: dest=/etc/vmware/viewagent-custom.conf regexp='^#KeyboardLayoutSync=FALSE' line='KeyboardLayoutSync=FALSE'
